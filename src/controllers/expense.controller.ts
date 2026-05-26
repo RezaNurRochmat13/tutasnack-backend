@@ -29,7 +29,10 @@ type UpdateBody = Partial<CreateBody>
 
 export async function list(c: Context<{ Bindings: Env }>) {
   const expenses = await (await createService(c)).list()
-  return c.json(expenses)
+  return c.json({
+    status: "success",
+    data: expenses,
+  })
 }
 
 export async function get(c: Context<{ Bindings: Env }>) {
@@ -38,7 +41,10 @@ export async function get(c: Context<{ Bindings: Env }>) {
 
   try {
     const expense = await (await createService(c)).get(id)
-    return c.json(expense)
+    return c.json({
+      status: "success",
+      data: expense,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Expense not found") {
       return c.json({ error: "Expense not found" }, 404)
@@ -54,7 +60,10 @@ export async function create(c: Context<{ Bindings: Env }>) {
     expenseDate: new Date(body.expenseDate),
     amount: body.amount,
   })
-  return c.json(expense, 201)
+  return c.json({
+    status: "success",
+    data: expense,
+  }, 201)
 }
 
 export async function update(c: Context<{ Bindings: Env }>) {
@@ -69,7 +78,10 @@ export async function update(c: Context<{ Bindings: Env }>) {
 
   try {
     const expense = await (await createService(c)).update(id, data)
-    return c.json(expense)
+    return c.json({
+      status: "success",
+      data: expense,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Expense not found") {
       return c.json({ error: "Expense not found" }, 404)
@@ -84,7 +96,10 @@ export async function remove(c: Context<{ Bindings: Env }>) {
 
   try {
     const expense = await (await createService(c)).remove(id)
-    return c.json(expense)
+    return c.json({
+      status: "success",
+      data: expense,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Expense not found") {
       return c.json({ error: "Expense not found" }, 404)

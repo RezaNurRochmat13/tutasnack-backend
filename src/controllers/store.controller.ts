@@ -21,19 +21,31 @@ function getId(c: Context) {
 
 export async function list(c: Context<{ Bindings: Env }>) {
   const stores = await (await createService(c)).list()
-  return c.json(stores)
+  return c.json({
+    status: "success",
+    data: stores,
+  })
 }
 
 export async function get(c: Context<{ Bindings: Env }>) {
   const id = getId(c)
-  if (!id) return c.json({ error: "ID is required" }, 400)
+  if (!id) return c.json({
+    status: "error",
+    message: "ID is required"
+  }, 400)
 
   try {
     const store = await (await createService(c)).get(id)
-    return c.json(store)
+    return c.json({
+      status: "success",
+      data: store,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Store not found") {
-      return c.json({ error: "Store not found" }, 404)
+      return c.json({
+        status: "error",
+        message: "Store not found"
+      }, 404)
     }
     throw e
   }
@@ -42,20 +54,32 @@ export async function get(c: Context<{ Bindings: Env }>) {
 export async function create(c: Context<{ Bindings: Env }>) {
   const body = getJsonBody<{ name: string; description?: string; address?: string }>(c)
   const store = await (await createService(c)).create(body)
-  return c.json(store, 201)
+  return c.json({
+    status: "success",
+    data: store,
+  }, 201)
 }
 
 export async function update(c: Context<{ Bindings: Env }>) {
   const id = getId(c)
-  if (!id) return c.json({ error: "ID is required" }, 400)
+  if (!id) return c.json({
+    status: "error",
+    message: "ID is required"
+  }, 400)
 
   const body = getJsonBody<{ name?: string; description?: string; address?: string }>(c)
   try {
     const store = await (await createService(c)).update(id, body)
-    return c.json(store)
+    return c.json({
+      status: "success",
+      data: store,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Store not found") {
-      return c.json({ error: "Store not found" }, 404)
+      return c.json({
+        status: "error",
+        message: "Store not found"
+      }, 404)
     }
     throw e
   }
@@ -63,14 +87,23 @@ export async function update(c: Context<{ Bindings: Env }>) {
 
 export async function remove(c: Context<{ Bindings: Env }>) {
   const id = getId(c)
-  if (!id) return c.json({ error: "ID is required" }, 400)
+  if (!id) return c.json({
+    status: "error",
+    message: "ID is required"
+  }, 400)
 
   try {
     const store = await (await createService(c)).remove(id)
-    return c.json(store)
+    return c.json({
+      status: "success",
+      data: store,
+    })
   } catch (e) {
     if (e instanceof Error && e.message === "Store not found") {
-      return c.json({ error: "Store not found" }, 404)
+      return c.json({
+        status: "error",
+        message: "Store not found"
+      }, 404)
     }
     throw e
   }

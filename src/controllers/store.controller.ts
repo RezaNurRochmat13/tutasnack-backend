@@ -5,7 +5,7 @@ import { StoreRepository } from "../repositories"
 import { StoreService } from "../services"
 
 async function createService(c: Context<{ Bindings: Env }>) {
-  const prisma = await getPrisma(c.env.DATABASE_URL)
+  const prisma = await getPrisma(c.env.DATABASE_URL, c.env.USE_NEON_ADAPTER === "true")
   return new StoreService(new StoreRepository(prisma))
 }
 

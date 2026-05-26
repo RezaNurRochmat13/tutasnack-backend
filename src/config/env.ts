@@ -8,4 +8,5 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema> & {
   NODE_ENV?: string
+  USE_NEON_ADAPTER?: string
 }

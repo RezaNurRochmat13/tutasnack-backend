@@ -1,7 +1,7 @@
 import { getPrisma } from "../../src/db/prisma"
 
 export async function createDbHelper(dbUrl: string) {
-  const prisma = await getPrisma(dbUrl)
+  const prisma = await getPrisma(dbUrl, false)
 
   async function cleanAll() {
     await prisma.salesTracker.deleteMany()

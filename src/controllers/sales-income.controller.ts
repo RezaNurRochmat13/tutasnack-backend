@@ -5,7 +5,7 @@ import { SalesIncomeRepository, StoreRepository } from "../repositories"
 import { SalesIncomeService } from "../services"
 
 async function createService(c: Context<{ Bindings: Env }>) {
-  const prisma = await getPrisma(c.env.DATABASE_URL)
+  const prisma = await getPrisma(c.env.DATABASE_URL, c.env.USE_NEON_ADAPTER === "true")
   return new SalesIncomeService(
     new SalesIncomeRepository(prisma),
     new StoreRepository(prisma),

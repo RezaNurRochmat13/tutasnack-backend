@@ -5,7 +5,7 @@ import { UserRepository } from "../repositories"
 import { AuthService } from "../services"
 
 async function createAuthService(c: Context<{ Bindings: Env }>) {
-  const prisma = await getPrisma(c.env.DATABASE_URL)
+  const prisma = await getPrisma(c.env.DATABASE_URL, c.env.USE_NEON_ADAPTER === "true")
   const repo = new UserRepository(prisma)
   return new AuthService(repo, c.env.JWT_SECRET)
 }

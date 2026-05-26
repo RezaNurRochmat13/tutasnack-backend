@@ -9,7 +9,7 @@ type CreateUserBody = CreateUserInput
 type UpdateUserBody = Partial<CreateUserInput>
 
 async function createUserService(c: Context<{ Bindings: Env }>) {
-  const prisma = await getPrisma(c.env.DATABASE_URL)
+  const prisma = await getPrisma(c.env.DATABASE_URL, c.env.USE_NEON_ADAPTER === "true")
   const repo = new UserRepository(prisma)
   return new UserService(repo)
 }

@@ -4,12 +4,12 @@ type AnyPrismaClient = PrismaClient & Record<string, any>
 
 let prisma: AnyPrismaClient | null = null
 
-export async function getPrisma(databaseUrl: string): Promise<AnyPrismaClient> {
+export async function getPrisma(databaseUrl: string, useNeonAdapter = false): Promise<AnyPrismaClient> {
   if (!prisma) {
     if (typeof process !== "undefined" && process.env.NODE_ENV === "test") {
       const { PrismaClient: TestClient } = await import("../__generated__/test-client")
       prisma = new TestClient({ datasourceUrl: databaseUrl }) as unknown as AnyPrismaClient
-    } else if (typeof process !== "undefined" && process.env.USE_NEON_ADAPTER === "true") {
+    } else if (useNeonAdapter) {
       const [{ PrismaNeon }, { Pool, neonConfig }] = await Promise.all([
         import("@prisma/adapter-neon") as any,
         import("@neondatabase/serverless") as any,

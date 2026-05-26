@@ -2,6 +2,7 @@ import { PrismaClient, User } from "@prisma/client"
 
 export type CreateUserInput = {
   email: string
+  password: string
   name?: string
 }
 
@@ -12,6 +13,13 @@ export interface IUserRepository {
   create(input: CreateUserInput): Promise<User>
   update(id: string, input: Partial<CreateUserInput>): Promise<User>
   delete(id: string): Promise<User>
+}
+
+export type SafeUser = Omit<User, "password">
+
+export function toSafeUser(user: User): SafeUser {
+  const { password: _, ...safe } = user
+  return safe
 }
 
 export class UserRepository implements IUserRepository {

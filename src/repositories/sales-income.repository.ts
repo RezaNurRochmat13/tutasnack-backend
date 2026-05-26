@@ -21,11 +21,12 @@ export class SalesIncomeRepository implements ISalesIncomeRepository {
     return this.prisma.salesIncome.findMany({
       where: storeId ? { storeId } : undefined,
       orderBy: { salesDate: "desc" },
+      include: { store: true },
     })
   }
 
   async findById(id: string): Promise<SalesIncome | null> {
-    return this.prisma.salesIncome.findUnique({ where: { id } })
+    return this.prisma.salesIncome.findUnique({ where: { id }, include: { store: true } })
   }
 
   async create(input: CreateSalesIncomeInput): Promise<SalesIncome> {

@@ -1,4 +1,5 @@
 import { PrismaClient, SalesTracker } from "@prisma/client"
+import { includes } from "zod/v4";
 
 export type CreateSalesTrackerInput = {
   storeId: string
@@ -24,12 +25,13 @@ export class SalesTrackerRepository implements ISalesTrackerRepository {
   async findAll(storeId?: string): Promise<SalesTracker[]> {
     return this.prisma.salesTracker.findMany({
       where: storeId ? { storeId } : undefined,
+      include: { store: true },
       orderBy: { salesDate: "desc" },
     })
   }
 
   async findById(id: string): Promise<SalesTracker | null> {
-    return this.prisma.salesTracker.findUnique({ where: { id } })
+    return this.prisma.salesTracker.findUnique({ where: { id }, include: { store: true } })
   }
 
   async create(input: CreateSalesTrackerInput): Promise<SalesTracker> {

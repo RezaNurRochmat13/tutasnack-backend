@@ -1,2 +1,6 @@
 export * as UserController from "./user.controller"
 export * as AuthController from "./auth.controller"
+export * as StoreController from "./store.controller"
+export * as SalesIncomeController from "./sales-income.controller"
+export * as ExpenseController from "./expense.controller"
+export * as SalesTrackerController from "./sales-tracker.controller"

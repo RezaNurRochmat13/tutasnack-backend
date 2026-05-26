@@ -6,6 +6,17 @@ export const spec = {
     description: "API untuk pencatatan penjualan, pengeluaran, dan tracker snack TutaSnack",
   },
   servers: [{ url: "/", description: "Current" }],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Masukkan token JWT dari endpoint /auth/login",
+      },
+    },
+  },
+  security: [{ bearerAuth: [] }],
   tags: [
     { name: "Auth", description: "Autentikasi" },
     { name: "Users", description: "Manajemen user" },
@@ -19,6 +30,7 @@ export const spec = {
     "/auth/register": {
       post: {
         tags: ["Auth"],
+        security: [],
         summary: "Registrasi user baru",
         requestBody: {
           required: true,
@@ -45,6 +57,7 @@ export const spec = {
     "/auth/login": {
       post: {
         tags: ["Auth"],
+        security: [],
         summary: "Login user",
         requestBody: {
           required: true,

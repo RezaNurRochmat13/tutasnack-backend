@@ -24,7 +24,7 @@ describe("Store API", () => {
   describe("POST /stores", () => {
     it("should create a store", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -43,7 +43,7 @@ describe("Store API", () => {
 
     it("should return 400 if name is missing", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ description: "No name" }),
@@ -57,7 +57,7 @@ describe("Store API", () => {
   describe("GET /stores", () => {
     it("should return all stores", async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Toko A" }),
@@ -65,7 +65,7 @@ describe("Store API", () => {
         bindings,
       )
       await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Toko B" }),
@@ -73,7 +73,7 @@ describe("Store API", () => {
         bindings,
       )
 
-      const res = await app.fetch(new Request(`${BASE_URL}/stores`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/stores`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.length).toBe(2)
@@ -83,7 +83,7 @@ describe("Store API", () => {
   describe("GET /stores/:id", () => {
     it("should return store by id", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Toko C" }),
@@ -91,7 +91,7 @@ describe("Store API", () => {
         bindings,
       )
       const { id } = await create.json()
-      const res = await app.fetch(new Request(`${BASE_URL}/stores/${id}`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/stores/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.name).toBe("Toko C")
@@ -99,7 +99,7 @@ describe("Store API", () => {
 
     it("should return 404 for missing store", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/stores/00000000-0000-0000-0000-000000000000`),
+        new Request(`${BASE_URL}/api/stores/00000000-0000-0000-0000-000000000000`),
         bindings,
       )
       expect(res.status).toBe(404)
@@ -109,7 +109,7 @@ describe("Store API", () => {
   describe("PUT /stores/:id", () => {
     it("should update a store", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Old Name" }),
@@ -119,7 +119,7 @@ describe("Store API", () => {
       const { id } = await create.json()
 
       const res = await app.fetch(
-        new Request(`${BASE_URL}/stores/${id}`, {
+        new Request(`${BASE_URL}/api/stores/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "New Name" }),
@@ -135,7 +135,7 @@ describe("Store API", () => {
   describe("DELETE /stores/:id", () => {
     it("should delete a store", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/stores`, {
+        new Request(`${BASE_URL}/api/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "To Delete" }),
@@ -145,13 +145,13 @@ describe("Store API", () => {
       const { id } = await create.json()
 
       const res = await app.fetch(
-        new Request(`${BASE_URL}/stores/${id}`, { method: "DELETE" }),
+        new Request(`${BASE_URL}/api/stores/${id}`, { method: "DELETE" }),
         bindings,
       )
       expect(res.status).toBe(200)
 
       const get = await app.fetch(
-        new Request(`${BASE_URL}/stores/${id}`),
+        new Request(`${BASE_URL}/api/stores/${id}`),
         bindings,
       )
       expect(get.status).toBe(404)

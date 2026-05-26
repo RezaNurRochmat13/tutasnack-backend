@@ -11,7 +11,7 @@ const bindings = {
 
 async function createStore(app: ReturnType<typeof createTestApp>): Promise<string> {
   const res = await app.fetch(
-    new Request(`${BASE_URL}/stores`, {
+    new Request(`${BASE_URL}/api/stores`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test Store" }),
@@ -39,7 +39,7 @@ describe("Sales Income API", () => {
   describe("POST /sales-income", () => {
     it("should create a sales income record", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-income`, {
+        new Request(`${BASE_URL}/api/sales-income`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -58,7 +58,7 @@ describe("Sales Income API", () => {
 
     it("should return 404 for non-existent store", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-income`, {
+        new Request(`${BASE_URL}/api/sales-income`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -76,7 +76,7 @@ describe("Sales Income API", () => {
   describe("GET /sales-income", () => {
     it("should list all records", async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/sales-income`, {
+        new Request(`${BASE_URL}/api/sales-income`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", amount: 50000 }),
@@ -84,7 +84,7 @@ describe("Sales Income API", () => {
         bindings,
       )
 
-      const res = await app.fetch(new Request(`${BASE_URL}/sales-income`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/sales-income`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.length).toBe(1)
@@ -92,7 +92,7 @@ describe("Sales Income API", () => {
 
     it("should filter by storeId", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-income?storeId=${storeId}`),
+        new Request(`${BASE_URL}/api/sales-income?storeId=${storeId}`),
         bindings,
       )
       expect(res.status).toBe(200)
@@ -102,7 +102,7 @@ describe("Sales Income API", () => {
   describe("GET /sales-income/:id", () => {
     it("should return record by id", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/sales-income`, {
+        new Request(`${BASE_URL}/api/sales-income`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", amount: 75000 }),
@@ -111,7 +111,7 @@ describe("Sales Income API", () => {
       )
       const { id } = await create.json()
 
-      const res = await app.fetch(new Request(`${BASE_URL}/sales-income/${id}`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/sales-income/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.amount).toBe(75000)
@@ -119,7 +119,7 @@ describe("Sales Income API", () => {
 
     it("should return 404 for missing record", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-income/00000000-0000-0000-0000-000000000000`),
+        new Request(`${BASE_URL}/api/sales-income/00000000-0000-0000-0000-000000000000`),
         bindings,
       )
       expect(res.status).toBe(404)
@@ -129,7 +129,7 @@ describe("Sales Income API", () => {
   describe("DELETE /sales-income/:id", () => {
     it("should delete a record", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/sales-income`, {
+        new Request(`${BASE_URL}/api/sales-income`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", amount: 50000 }),
@@ -139,13 +139,13 @@ describe("Sales Income API", () => {
       const { id } = await create.json()
 
       const del = await app.fetch(
-        new Request(`${BASE_URL}/sales-income/${id}`, { method: "DELETE" }),
+        new Request(`${BASE_URL}/api/sales-income/${id}`, { method: "DELETE" }),
         bindings,
       )
       expect(del.status).toBe(200)
 
       const get = await app.fetch(
-        new Request(`${BASE_URL}/sales-income/${id}`),
+        new Request(`${BASE_URL}/api/sales-income/${id}`),
         bindings,
       )
       expect(get.status).toBe(404)

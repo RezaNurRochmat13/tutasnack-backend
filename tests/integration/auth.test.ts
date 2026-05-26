@@ -31,7 +31,7 @@ describe("Auth API", () => {
   describe("POST /auth/register", () => {
     it("should return 201 and token for valid input", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/register`, {
+        new Request(`${BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -52,7 +52,7 @@ describe("Auth API", () => {
 
     it("should return 409 for duplicate email", async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/auth/register`, {
+        new Request(`${BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -64,7 +64,7 @@ describe("Auth API", () => {
       )
 
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/register`, {
+        new Request(`${BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -82,7 +82,7 @@ describe("Auth API", () => {
 
     it("should return 400 for invalid input", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/register`, {
+        new Request(`${BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -100,7 +100,7 @@ describe("Auth API", () => {
   describe("POST /auth/login", () => {
     beforeEach(async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/auth/register`, {
+        new Request(`${BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -115,7 +115,7 @@ describe("Auth API", () => {
 
     it("should return 200 and token for valid credentials", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/login`, {
+        new Request(`${BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -135,7 +135,7 @@ describe("Auth API", () => {
 
     it("should return 401 for wrong password", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/login`, {
+        new Request(`${BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -153,7 +153,7 @@ describe("Auth API", () => {
 
     it("should return 401 for non-existent email", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/auth/login`, {
+        new Request(`${BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

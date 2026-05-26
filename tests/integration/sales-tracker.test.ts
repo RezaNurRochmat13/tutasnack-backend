@@ -11,7 +11,7 @@ const bindings = {
 
 async function createStore(app: ReturnType<typeof createTestApp>): Promise<string> {
   const res = await app.fetch(
-    new Request(`${BASE_URL}/stores`, {
+    new Request(`${BASE_URL}/api/stores`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test Store" }),
@@ -39,7 +39,7 @@ describe("Sales Tracker API", () => {
   describe("POST /sales-tracker", () => {
     it("should create a tracker record", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker`, {
+        new Request(`${BASE_URL}/api/sales-tracker`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -60,7 +60,7 @@ describe("Sales Tracker API", () => {
 
     it("should return 404 for non-existent store", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker`, {
+        new Request(`${BASE_URL}/api/sales-tracker`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -79,7 +79,7 @@ describe("Sales Tracker API", () => {
   describe("GET /sales-tracker", () => {
     it("should list all records", async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker`, {
+        new Request(`${BASE_URL}/api/sales-tracker`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", saleCount: 50, soldCount: 30 }),
@@ -87,7 +87,7 @@ describe("Sales Tracker API", () => {
         bindings,
       )
 
-      const res = await app.fetch(new Request(`${BASE_URL}/sales-tracker`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.length).toBe(1)
@@ -95,7 +95,7 @@ describe("Sales Tracker API", () => {
 
     it("should filter by storeId", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker?storeId=${storeId}`),
+        new Request(`${BASE_URL}/api/sales-tracker?storeId=${storeId}`),
         bindings,
       )
       expect(res.status).toBe(200)
@@ -105,7 +105,7 @@ describe("Sales Tracker API", () => {
   describe("GET /sales-tracker/:id", () => {
     it("should return record by id", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker`, {
+        new Request(`${BASE_URL}/api/sales-tracker`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", saleCount: 20, soldCount: 15 }),
@@ -114,7 +114,7 @@ describe("Sales Tracker API", () => {
       )
       const { id } = await create.json()
 
-      const res = await app.fetch(new Request(`${BASE_URL}/sales-tracker/${id}`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.saleCount).toBe(20)
@@ -122,7 +122,7 @@ describe("Sales Tracker API", () => {
 
     it("should return 404 for missing record", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker/00000000-0000-0000-0000-000000000000`),
+        new Request(`${BASE_URL}/api/sales-tracker/00000000-0000-0000-0000-000000000000`),
         bindings,
       )
       expect(res.status).toBe(404)
@@ -132,7 +132,7 @@ describe("Sales Tracker API", () => {
   describe("DELETE /sales-tracker/:id", () => {
     it("should delete a record", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker`, {
+        new Request(`${BASE_URL}/api/sales-tracker`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storeId, salesDate: "2024-06-15", saleCount: 10, soldCount: 8 }),
@@ -142,13 +142,13 @@ describe("Sales Tracker API", () => {
       const { id } = await create.json()
 
       const del = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker/${id}`, { method: "DELETE" }),
+        new Request(`${BASE_URL}/api/sales-tracker/${id}`, { method: "DELETE" }),
         bindings,
       )
       expect(del.status).toBe(200)
 
       const get = await app.fetch(
-        new Request(`${BASE_URL}/sales-tracker/${id}`),
+        new Request(`${BASE_URL}/api/sales-tracker/${id}`),
         bindings,
       )
       expect(get.status).toBe(404)

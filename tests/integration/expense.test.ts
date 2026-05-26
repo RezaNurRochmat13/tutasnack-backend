@@ -24,7 +24,7 @@ describe("Expense API", () => {
   describe("POST /expenses", () => {
     it("should create an expense", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -43,7 +43,7 @@ describe("Expense API", () => {
 
     it("should return 400 if name is missing", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ expenseDate: "2024-06-15", amount: 50000 }),
@@ -57,7 +57,7 @@ describe("Expense API", () => {
   describe("GET /expenses", () => {
     it("should list all expenses", async () => {
       await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Expense 1", expenseDate: "2024-06-15", amount: 10000 }),
@@ -65,7 +65,7 @@ describe("Expense API", () => {
         bindings,
       )
 
-      const res = await app.fetch(new Request(`${BASE_URL}/expenses`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/expenses`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.length).toBe(1)
@@ -75,7 +75,7 @@ describe("Expense API", () => {
   describe("GET /expenses/:id", () => {
     it("should return expense by id", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Test", expenseDate: "2024-06-15", amount: 25000 }),
@@ -84,7 +84,7 @@ describe("Expense API", () => {
       )
       const { id } = await create.json()
 
-      const res = await app.fetch(new Request(`${BASE_URL}/expenses/${id}`), bindings)
+      const res = await app.fetch(new Request(`${BASE_URL}/api/expenses/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
       expect(body.name).toBe("Test")
@@ -92,7 +92,7 @@ describe("Expense API", () => {
 
     it("should return 404 for missing expense", async () => {
       const res = await app.fetch(
-        new Request(`${BASE_URL}/expenses/00000000-0000-0000-0000-000000000000`),
+        new Request(`${BASE_URL}/api/expenses/00000000-0000-0000-0000-000000000000`),
         bindings,
       )
       expect(res.status).toBe(404)
@@ -102,7 +102,7 @@ describe("Expense API", () => {
   describe("PUT /expenses/:id", () => {
     it("should update an expense", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Old", expenseDate: "2024-06-15", amount: 10000 }),
@@ -112,7 +112,7 @@ describe("Expense API", () => {
       const { id } = await create.json()
 
       const res = await app.fetch(
-        new Request(`${BASE_URL}/expenses/${id}`, {
+        new Request(`${BASE_URL}/api/expenses/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: 99999 }),
@@ -128,7 +128,7 @@ describe("Expense API", () => {
   describe("DELETE /expenses/:id", () => {
     it("should delete an expense", async () => {
       const create = await app.fetch(
-        new Request(`${BASE_URL}/expenses`, {
+        new Request(`${BASE_URL}/api/expenses`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "To Delete", expenseDate: "2024-06-15", amount: 5000 }),
@@ -138,13 +138,13 @@ describe("Expense API", () => {
       const { id } = await create.json()
 
       const del = await app.fetch(
-        new Request(`${BASE_URL}/expenses/${id}`, { method: "DELETE" }),
+        new Request(`${BASE_URL}/api/expenses/${id}`, { method: "DELETE" }),
         bindings,
       )
       expect(del.status).toBe(200)
 
       const get = await app.fetch(
-        new Request(`${BASE_URL}/expenses/${id}`),
+        new Request(`${BASE_URL}/api/expenses/${id}`),
         bindings,
       )
       expect(get.status).toBe(404)

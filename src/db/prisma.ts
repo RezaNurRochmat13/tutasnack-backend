@@ -1,14 +1,28 @@
-import { PrismaClient } from "@prisma/client"
-import { PrismaNeon } from "@prisma/adapter-neon"
-import { Pool } from "@neondatabase/serverless"
+import type { PrismaClient } from "@prisma/client"
 
-let prisma: PrismaClient
+type AnyPrismaClient = PrismaClient & Record<string, any>
 
-export function getPrisma(databaseUrl: string): PrismaClient {
+let prisma: AnyPrismaClient | null = null
+
+export async function getPrisma(databaseUrl: string): Promise<AnyPrismaClient> {
   if (!prisma) {
-    const pool = new Pool({ connectionString: databaseUrl })
-    const adapter = new PrismaNeon(pool)
-    prisma = new PrismaClient({ adapter })
+    if (typeof process !== "undefined" && process.env.NODE_ENV === "test") {
+      const { PrismaClient: TestClient } = await import("../__generated__/test-client")
+      prisma = new TestClient({ datasourceUrl: databaseUrl }) as unknown as AnyPrismaClient
+    } else if (typeof process !== "undefined" && process.env.USE_NEON_ADAPTER === "true") {
+      const [{ PrismaNeon }, { Pool, neonConfig }] = await Promise.all([
+        import("@prisma/adapter-neon") as any,
+        import("@neondatabase/serverless") as any,
+      ])
+      neonConfig.poolQueryViaFetch = true
+      const pool = new Pool({ connectionString: databaseUrl })
+      const adapter = new PrismaNeon(pool)
+      const { PrismaClient } = await import("@prisma/client")
+      prisma = new PrismaClient({ adapter }) as unknown as AnyPrismaClient
+    } else {
+      const { PrismaClient } = await import("@prisma/client")
+      prisma = new PrismaClient({ datasourceUrl: databaseUrl }) as unknown as AnyPrismaClient
+    }
   }
   return prisma
 }

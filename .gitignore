@@ -5,3 +5,4 @@ dist
 prisma/generated
 *.db
 .wrangler
+src/__generated__

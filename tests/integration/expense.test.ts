@@ -14,11 +14,11 @@ describe("Expense API", () => {
 
   beforeAll(async () => {
     app = createTestApp()
-    await createDbHelper(dbUrl).cleanAll()
+    await (await createDbHelper(dbUrl)).cleanAll()
   })
 
   afterEach(async () => {
-    await createDbHelper(dbUrl).cleanAll()
+    await (await createDbHelper(dbUrl)).cleanAll()
   })
 
   describe("POST /expenses", () => {

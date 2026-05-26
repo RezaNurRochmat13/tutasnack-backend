@@ -28,11 +28,11 @@ describe("Sales Income API", () => {
 
   beforeAll(async () => {
     app = createTestApp()
-    await createDbHelper(dbUrl).cleanAll()
+    await (await createDbHelper(dbUrl)).cleanAll()
   })
 
   beforeEach(async () => {
-    await createDbHelper(dbUrl).cleanAll()
+    await (await createDbHelper(dbUrl)).cleanAll()
     storeId = await createStore(app)
   })
 

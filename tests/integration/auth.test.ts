@@ -12,7 +12,7 @@ const bindings = {
 }
 
 async function cleanDb() {
-  const prisma = getPrisma(dbUrl)
+  const prisma = await getPrisma(dbUrl)
   await prisma.user.deleteMany()
 }
 

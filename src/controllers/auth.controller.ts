@@ -4,8 +4,8 @@ import { getPrisma } from "../db/prisma"
 import { UserRepository } from "../repositories"
 import { AuthService } from "../services"
 
-function createAuthService(c: Context<{ Bindings: Env }>) {
-  const prisma = getPrisma(c.env.DATABASE_URL)
+async function createAuthService(c: Context<{ Bindings: Env }>) {
+  const prisma = await getPrisma(c.env.DATABASE_URL)
   const repo = new UserRepository(prisma)
   return new AuthService(repo, c.env.JWT_SECRET)
 }
@@ -28,7 +28,7 @@ type LoginBody = {
 export async function register(c: Context<{ Bindings: Env }>) {
   try {
     const body = getJsonBody<RegisterBody>(c)
-    const result = await createAuthService(c).register(body)
+    const result = await (await createAuthService(c)).register(body)
     return c.json(result, 201)
   } catch (e) {
     if (e instanceof Error && e.message === "Email already registered") {
@@ -41,7 +41,7 @@ export async function register(c: Context<{ Bindings: Env }>) {
 export async function login(c: Context<{ Bindings: Env }>) {
   try {
     const body = getJsonBody<LoginBody>(c)
-    const result = await createAuthService(c).login(body)
+    const result = await (await createAuthService(c)).login(body)
     return c.json(result)
   } catch (e) {
     if (e instanceof Error && e.message === "Invalid email or password") {

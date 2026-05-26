@@ -1,15 +1,8 @@
 import type { Context, Next } from "hono"
 import type { Env } from "../config/env"
-import type { JwtPayload } from "../lib/jwt"
 import { verifyToken } from "../lib/jwt"
 
-export type Variables = {
-  user: JwtPayload
-}
-
-type AppEnv = { Bindings: Env; Variables: Variables }
-
-export async function authMiddleware(c: Context<AppEnv>, next: Next) {
+export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
   if (typeof process !== "undefined" && process.env.NODE_ENV === "test") {
     await next()
     return
@@ -23,7 +16,7 @@ export async function authMiddleware(c: Context<AppEnv>, next: Next) {
   const token = header.slice(7)
   try {
     const payload = await verifyToken(token, c.env.JWT_SECRET)
-    c.set("user", payload)
+    ;(c as any).set("user", payload)
     await next()
   } catch {
     return c.json({ error: "Invalid or expired token" }, 401)

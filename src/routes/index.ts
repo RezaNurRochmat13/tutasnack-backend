@@ -7,20 +7,20 @@ import { salesIncomeRoute } from "./sales-income.route"
 import { expenseRoute } from "./expense.route"
 import { salesTrackerRoute } from "./sales-tracker.route"
 import { docsRoute } from "../docs"
-import { authMiddleware, type Variables } from "../middleware/auth"
-
-type AppEnv = { Bindings: Env; Variables: Variables }
-
-const protectedApi = new Hono<AppEnv>()
-protectedApi.use("*", authMiddleware)
-protectedApi.route("/users", userRoute)
-protectedApi.route("/stores", storeRoute)
-protectedApi.route("/sales-income", salesIncomeRoute)
-protectedApi.route("/expenses", expenseRoute)
-protectedApi.route("/sales-tracker", salesTrackerRoute)
+import { authMiddleware } from "../middleware/auth"
 
 export function registerRoutes(app: Hono<{ Bindings: Env }>) {
+  app.use("/api/users/*", authMiddleware)
+  app.use("/api/stores/*", authMiddleware)
+  app.use("/api/sales-income/*", authMiddleware)
+  app.use("/api/expenses/*", authMiddleware)
+  app.use("/api/sales-tracker/*", authMiddleware)
+
+  app.route("/api/users", userRoute)
   app.route("/api/auth", authRoute)
-  app.route("/api", protectedApi)
+  app.route("/api/stores", storeRoute)
+  app.route("/api/sales-income", salesIncomeRoute)
+  app.route("/api/expenses", expenseRoute)
+  app.route("/api/sales-tracker", salesTrackerRoute)
   app.route("/docs", docsRoute)
 }

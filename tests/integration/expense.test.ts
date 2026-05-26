@@ -37,8 +37,8 @@ describe("Expense API", () => {
       )
       expect(res.status).toBe(201)
       const body: any = await res.json()
-      expect(body.name).toBe("Beli bahan baku")
-      expect(body.amount).toBe(50000)
+      expect(body.data.name).toBe("Beli bahan baku")
+      expect(body.data.amount).toBe(50000)
     })
 
     it("should return 400 if name is missing", async () => {
@@ -68,7 +68,7 @@ describe("Expense API", () => {
       const res = await app.fetch(new Request(`${BASE_URL}/api/expenses`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.length).toBe(1)
+      expect(body.data.length).toBe(1)
     })
   })
 
@@ -82,12 +82,12 @@ describe("Expense API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const res = await app.fetch(new Request(`${BASE_URL}/api/expenses/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.name).toBe("Test")
+      expect(body.data.name).toBe("Test")
     })
 
     it("should return 404 for missing expense", async () => {
@@ -109,7 +109,7 @@ describe("Expense API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const res = await app.fetch(
         new Request(`${BASE_URL}/api/expenses/${id}`, {
@@ -121,7 +121,7 @@ describe("Expense API", () => {
       )
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.amount).toBe(99999)
+      expect(body.data.amount).toBe(99999)
     })
   })
 
@@ -135,7 +135,7 @@ describe("Expense API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const del = await app.fetch(
         new Request(`${BASE_URL}/api/expenses/${id}`, { method: "DELETE" }),

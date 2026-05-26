@@ -18,8 +18,8 @@ async function createStore(app: ReturnType<typeof createTestApp>): Promise<strin
     }),
     bindings,
   )
-  const { id } = await res.json()
-  return id
+  const body = await res.json() as any
+  return body.data.id
 }
 
 describe("Sales Tracker API", () => {
@@ -53,9 +53,9 @@ describe("Sales Tracker API", () => {
       )
       expect(res.status).toBe(201)
       const body: any = await res.json()
-      expect(body.saleCount).toBe(100)
-      expect(body.soldCount).toBe(75)
-      expect(body.storeId).toBe(storeId)
+      expect(body.data.saleCount).toBe(100)
+      expect(body.data.soldCount).toBe(75)
+      expect(body.data.storeId).toBe(storeId)
     })
 
     it("should return 404 for non-existent store", async () => {
@@ -90,7 +90,7 @@ describe("Sales Tracker API", () => {
       const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.length).toBe(1)
+      expect(body.data.length).toBe(1)
     })
 
     it("should filter by storeId", async () => {
@@ -112,12 +112,12 @@ describe("Sales Tracker API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.saleCount).toBe(20)
+      expect(body.data.saleCount).toBe(20)
     })
 
     it("should return 404 for missing record", async () => {
@@ -139,7 +139,7 @@ describe("Sales Tracker API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const del = await app.fetch(
         new Request(`${BASE_URL}/api/sales-tracker/${id}`, { method: "DELETE" }),

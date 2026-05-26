@@ -37,8 +37,8 @@ describe("Store API", () => {
       )
       expect(res.status).toBe(201)
       const body: any = await res.json()
-      expect(body.name).toBe("Toko A")
-      expect(body.id).toBeDefined()
+      expect(body.data.name).toBe("Toko A")
+      expect(body.data.id).toBeDefined()
     })
 
     it("should return 400 if name is missing", async () => {
@@ -76,7 +76,7 @@ describe("Store API", () => {
       const res = await app.fetch(new Request(`${BASE_URL}/api/stores`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.length).toBe(2)
+      expect(body.data.length).toBe(2)
     })
   })
 
@@ -90,11 +90,11 @@ describe("Store API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
       const res = await app.fetch(new Request(`${BASE_URL}/api/stores/${id}`), bindings)
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.name).toBe("Toko C")
+      expect(body.data.name).toBe("Toko C")
     })
 
     it("should return 404 for missing store", async () => {
@@ -116,7 +116,7 @@ describe("Store API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const res = await app.fetch(
         new Request(`${BASE_URL}/api/stores/${id}`, {
@@ -128,7 +128,7 @@ describe("Store API", () => {
       )
       expect(res.status).toBe(200)
       const body: any = await res.json()
-      expect(body.name).toBe("New Name")
+      expect(body.data.name).toBe("New Name")
     })
   })
 
@@ -142,7 +142,7 @@ describe("Store API", () => {
         }),
         bindings,
       )
-      const { id } = await create.json()
+      const { data: { id } } = await create.json() as any
 
       const res = await app.fetch(
         new Request(`${BASE_URL}/api/stores/${id}`, { method: "DELETE" }),

@@ -1,6 +1,7 @@
 import type { Context } from "hono"
 import type { Env } from "../config/env"
 import { getPrisma } from "../db/prisma"
+import { paginate } from "../lib/pagination"
 import { ExpenseRepository } from "../repositories"
 import { ExpenseService } from "../services"
 
@@ -19,6 +20,12 @@ function getId(c: Context) {
   return id
 }
 
+function getPagination(c: Context) {
+  const page = parseInt(c.req.query("page") ?? "") || undefined
+  const limit = parseInt(c.req.query("limit") ?? "") || undefined
+  return paginate(page, limit)
+}
+
 type CreateBody = {
   name: string
   expenseDate: string
@@ -28,10 +35,17 @@ type CreateBody = {
 type UpdateBody = Partial<CreateBody>
 
 export async function index(c: Context<{ Bindings: Env }>) {
-  const expenses = await (await createService(c)).list()
+  const pagination = getPagination(c)
+  const result = await (await createService(c)).list(pagination)
   return c.json({
     status: "success",
-    data: expenses,
+    data: result.data,
+    pagination: {
+      page: result.page,
+      limit: result.limit,
+      total: result.total,
+      totalPages: result.totalPages,
+    },
   })
 }
 

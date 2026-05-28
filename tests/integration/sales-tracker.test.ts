@@ -100,6 +100,38 @@ describe("Sales Tracker API", () => {
       )
       expect(res.status).toBe(200)
     })
+
+    it("should return pagination metadata", async () => {
+      const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker`), bindings)
+      expect(res.status).toBe(200)
+      const body: any = await res.json()
+      expect(body.pagination).toBeDefined()
+      expect(body.pagination.page).toBe(1)
+      expect(body.pagination.limit).toBe(10)
+    })
+
+    it("should paginate with page and limit", async () => {
+      for (let i = 0; i < 3; i++) {
+        await app.fetch(
+          new Request(`${BASE_URL}/api/sales-tracker`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ storeId, salesDate: `2024-06-1${i}`, saleCount: 10, soldCount: 5 }),
+          }),
+          bindings,
+        )
+      }
+
+      const res = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker?page=1&limit=2`),
+        bindings,
+      )
+      expect(res.status).toBe(200)
+      const body: any = await res.json()
+      expect(body.data.length).toBe(2)
+      expect(body.pagination.total).toBe(3)
+      expect(body.pagination.totalPages).toBe(2)
+    })
   })
 
   describe("GET /sales-tracker/:id", () => {

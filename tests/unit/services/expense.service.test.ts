@@ -31,10 +31,26 @@ describe("ExpenseService", () => {
   })
 
   describe("list", () => {
-    it("should return all expenses", async () => {
-      repo.findAll.mockResolvedValue([mockExpense])
+    it("should return paginated expenses", async () => {
+      const paginatedResult = {
+        data: [mockExpense], total: 1, page: 1, limit: 10, totalPages: 1,
+      }
+      repo.findAll.mockResolvedValue(paginatedResult)
       const result = await service.list()
-      expect(result).toHaveLength(1)
+      expect(result.data).toHaveLength(1)
+      expect(result.total).toBe(1)
+      expect(result.page).toBe(1)
+    })
+
+    it("should pass pagination params", async () => {
+      const paginatedResult = {
+        data: [], total: 0, page: 2, limit: 5, totalPages: 0,
+      }
+      repo.findAll.mockResolvedValue(paginatedResult)
+      const result = await service.list({ page: 2, limit: 5 })
+      expect(repo.findAll).toHaveBeenCalledWith({ page: 2, limit: 5 })
+      expect(result.page).toBe(2)
+      expect(result.limit).toBe(5)
     })
   })
 

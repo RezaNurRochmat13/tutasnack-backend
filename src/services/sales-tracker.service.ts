@@ -1,19 +1,20 @@
-import { SalesTracker } from "@prisma/client"
-import {
+import type { PaginationParams, PaginatedResult } from "../lib/pagination"
+import type { SalesTracker } from "@prisma/client"
+import type {
   ISalesTrackerRepository,
   IStoreRepository,
   CreateSalesTrackerInput,
 } from "../repositories"
 
 export interface ISalesTrackerService {
-  list(storeId?: string): Promise<SalesTracker[]>
-  get(id: string): Promise<SalesTracker>
-  create(input: CreateSalesTrackerInput): Promise<SalesTracker>
+  list(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<any>>
+  get(id: string): Promise<any>
+  create(input: CreateSalesTrackerInput): Promise<any>
   update(
     id: string,
     input: Partial<CreateSalesTrackerInput>,
-  ): Promise<SalesTracker>
-  remove(id: string): Promise<SalesTracker>
+  ): Promise<any>
+  remove(id: string): Promise<any>
 }
 
 export class SalesTrackerService implements ISalesTrackerService {
@@ -22,8 +23,8 @@ export class SalesTrackerService implements ISalesTrackerService {
     private storeRepository: IStoreRepository,
   ) {}
 
-  async list(storeId?: string): Promise<SalesTracker[]> {
-    return this.salesTrackerRepository.findAll(storeId)
+  async list(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<any>> {
+    return this.salesTrackerRepository.findAll(storeId, pagination)
   }
 
   async get(id: string): Promise<SalesTracker> {

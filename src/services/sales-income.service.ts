@@ -1,16 +1,17 @@
-import { SalesIncome } from "@prisma/client"
-import {
+import type { PaginationParams, PaginatedResult } from "../lib/pagination"
+import type { SalesIncome } from "@prisma/client"
+import type {
   ISalesIncomeRepository,
   IStoreRepository,
   CreateSalesIncomeInput,
 } from "../repositories"
 
 export interface ISalesIncomeService {
-  list(storeId?: string): Promise<SalesIncome[]>
-  get(id: string): Promise<SalesIncome>
-  create(input: CreateSalesIncomeInput): Promise<SalesIncome>
-  update(id: string, input: Partial<CreateSalesIncomeInput>): Promise<SalesIncome>
-  remove(id: string): Promise<SalesIncome>
+  list(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<any>>
+  get(id: string): Promise<any>
+  create(input: CreateSalesIncomeInput): Promise<any>
+  update(id: string, input: Partial<CreateSalesIncomeInput>): Promise<any>
+  remove(id: string): Promise<any>
 }
 
 export class SalesIncomeService implements ISalesIncomeService {
@@ -19,8 +20,8 @@ export class SalesIncomeService implements ISalesIncomeService {
     private storeRepository: IStoreRepository,
   ) {}
 
-  async list(storeId?: string): Promise<SalesIncome[]> {
-    return this.salesIncomeRepository.findAll(storeId)
+  async list(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<any>> {
+    return this.salesIncomeRepository.findAll(storeId, pagination)
   }
 
   async get(id: string): Promise<SalesIncome> {

@@ -1,19 +1,20 @@
-import { Expense } from "@prisma/client"
-import { IExpenseRepository, CreateExpenseInput } from "../repositories"
+import type { PaginationParams, PaginatedResult } from "../lib/pagination"
+import type { Expense } from "@prisma/client"
+import type { IExpenseRepository, CreateExpenseInput } from "../repositories"
 
 export interface IExpenseService {
-  list(): Promise<Expense[]>
-  get(id: string): Promise<Expense>
-  create(input: CreateExpenseInput): Promise<Expense>
-  update(id: string, input: Partial<CreateExpenseInput>): Promise<Expense>
-  remove(id: string): Promise<Expense>
+  list(pagination?: PaginationParams): Promise<PaginatedResult<any>>
+  get(id: string): Promise<any>
+  create(input: CreateExpenseInput): Promise<any>
+  update(id: string, input: Partial<CreateExpenseInput>): Promise<any>
+  remove(id: string): Promise<any>
 }
 
 export class ExpenseService implements IExpenseService {
   constructor(private expenseRepository: IExpenseRepository) {}
 
-  async list(): Promise<Expense[]> {
-    return this.expenseRepository.findAll()
+  async list(pagination?: PaginationParams): Promise<PaginatedResult<any>> {
+    return this.expenseRepository.findAll(pagination)
   }
 
   async get(id: string): Promise<Expense> {

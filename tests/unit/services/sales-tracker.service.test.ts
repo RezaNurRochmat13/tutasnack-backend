@@ -45,16 +45,35 @@ describe("SalesTrackerService", () => {
   })
 
   describe("list", () => {
-    it("should return all records", async () => {
-      stRepo.findAll.mockResolvedValue([mockRecord])
+    it("should return paginated records", async () => {
+      const paginatedResult = {
+        data: [mockRecord], total: 1, page: 1, limit: 10, totalPages: 1,
+      }
+      stRepo.findAll.mockResolvedValue(paginatedResult)
       const result = await service.list()
-      expect(result).toHaveLength(1)
+      expect(result.data).toHaveLength(1)
+      expect(result.total).toBe(1)
+      expect(result.page).toBe(1)
     })
 
     it("should filter by storeId", async () => {
-      stRepo.findAll.mockResolvedValue([mockRecord])
+      const paginatedResult = {
+        data: [mockRecord], total: 1, page: 1, limit: 10, totalPages: 1,
+      }
+      stRepo.findAll.mockResolvedValue(paginatedResult)
       await service.list("store-1")
-      expect(stRepo.findAll).toHaveBeenCalledWith("store-1")
+      expect(stRepo.findAll).toHaveBeenCalledWith("store-1", undefined)
+    })
+
+    it("should pass pagination params", async () => {
+      const paginatedResult = {
+        data: [], total: 0, page: 2, limit: 5, totalPages: 0,
+      }
+      stRepo.findAll.mockResolvedValue(paginatedResult)
+      const result = await service.list(undefined, { page: 2, limit: 5 })
+      expect(stRepo.findAll).toHaveBeenCalledWith(undefined, { page: 2, limit: 5 })
+      expect(result.page).toBe(2)
+      expect(result.limit).toBe(5)
     })
   })
 

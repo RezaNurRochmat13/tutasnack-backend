@@ -1,5 +1,5 @@
 import { PrismaClient, SalesTracker } from "@prisma/client"
-import { includes } from "zod/v4";
+import type { PaginationParams, PaginatedResult } from "../lib/pagination"
 
 export type CreateSalesTrackerInput = {
   storeId: string
@@ -9,7 +9,7 @@ export type CreateSalesTrackerInput = {
 }
 
 export interface ISalesTrackerRepository {
-  findAll(storeId?: string): Promise<SalesTracker[]>
+  findAll(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<SalesTracker>>
   findById(id: string): Promise<SalesTracker | null>
   create(input: CreateSalesTrackerInput): Promise<SalesTracker>
   update(
@@ -22,12 +22,23 @@ export interface ISalesTrackerRepository {
 export class SalesTrackerRepository implements ISalesTrackerRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findAll(storeId?: string): Promise<SalesTracker[]> {
-    return this.prisma.salesTracker.findMany({
-      where: storeId ? { storeId } : undefined,
-      include: { store: true },
-      orderBy: { salesDate: "desc" },
-    })
+  async findAll(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<SalesTracker>> {
+    const where = storeId ? { storeId } : undefined
+    const page = pagination?.page ?? 1
+    const limit = pagination?.limit ?? 10
+
+    const [data, total] = await Promise.all([
+      this.prisma.salesTracker.findMany({
+        where,
+        include: { store: true },
+        orderBy: { salesDate: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.salesTracker.count({ where }),
+    ])
+
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) }
   }
 
   async findById(id: string): Promise<SalesTracker | null> {

@@ -1,4 +1,5 @@
 import { PrismaClient, SalesIncome } from "@prisma/client"
+import type { PaginationParams, PaginatedResult } from "../lib/pagination"
 
 export type CreateSalesIncomeInput = {
   storeId: string
@@ -7,7 +8,7 @@ export type CreateSalesIncomeInput = {
 }
 
 export interface ISalesIncomeRepository {
-  findAll(storeId?: string): Promise<SalesIncome[]>
+  findAll(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<SalesIncome>>
   findById(id: string): Promise<SalesIncome | null>
   create(input: CreateSalesIncomeInput): Promise<SalesIncome>
   update(id: string, input: Partial<CreateSalesIncomeInput>): Promise<SalesIncome>
@@ -17,12 +18,23 @@ export interface ISalesIncomeRepository {
 export class SalesIncomeRepository implements ISalesIncomeRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findAll(storeId?: string): Promise<SalesIncome[]> {
-    return this.prisma.salesIncome.findMany({
-      where: storeId ? { storeId } : undefined,
-      orderBy: { salesDate: "desc" },
-      include: { store: true },
-    })
+  async findAll(storeId?: string, pagination?: PaginationParams): Promise<PaginatedResult<SalesIncome>> {
+    const where = storeId ? { storeId } : undefined
+    const page = pagination?.page ?? 1
+    const limit = pagination?.limit ?? 10
+
+    const [data, total] = await Promise.all([
+      this.prisma.salesIncome.findMany({
+        where,
+        orderBy: { salesDate: "desc" },
+        include: { store: true },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.salesIncome.count({ where }),
+    ])
+
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) }
   }
 
   async findById(id: string): Promise<SalesIncome | null> {

@@ -15,6 +15,17 @@ export const spec = {
         description: "Masukkan token JWT dari endpoint /auth/login",
       },
     },
+    schemas: {
+      Pagination: {
+        type: "object",
+        properties: {
+          page: { type: "integer", example: 1 },
+          limit: { type: "integer", example: 10 },
+          total: { type: "integer", example: 50 },
+          totalPages: { type: "integer", example: 5 },
+        },
+      },
+    },
   },
   security: [{ bearerAuth: [] }],
   tags: [
@@ -204,11 +215,29 @@ export const spec = {
     "/sales-income": {
       get: {
         tags: ["Sales Income"],
-        summary: "Daftar pendapatan",
+        summary: "Daftar pendapatan (dengan paginasi)",
         parameters: [
           { name: "storeId", in: "query", required: false, schema: { type: "string" }, description: "Filter by toko" },
+          { name: "page", in: "query", required: false, schema: { type: "integer", default: 1, minimum: 1 }, description: "Halaman" },
+          { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, minimum: 1, maximum: 100 }, description: "Jumlah per halaman" },
         ],
-        responses: { 200: { description: "OK" } },
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: { type: "array", items: { type: "object" } },
+                    pagination: { $ref: "#/components/schemas/Pagination" },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
         tags: ["Sales Income"],
@@ -269,8 +298,28 @@ export const spec = {
     "/expenses": {
       get: {
         tags: ["Expenses"],
-        summary: "Daftar pengeluaran",
-        responses: { 200: { description: "OK" } },
+        summary: "Daftar pengeluaran (dengan paginasi)",
+        parameters: [
+          { name: "page", in: "query", required: false, schema: { type: "integer", default: 1, minimum: 1 }, description: "Halaman" },
+          { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, minimum: 1, maximum: 100 }, description: "Jumlah per halaman" },
+        ],
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: { type: "array", items: { type: "object" } },
+                    pagination: { $ref: "#/components/schemas/Pagination" },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
         tags: ["Expenses"],
@@ -420,11 +469,29 @@ export const spec = {
     "/sales-tracker": {
       get: {
         tags: ["Sales Tracker"],
-        summary: "Daftar tracker penjualan",
+        summary: "Daftar tracker penjualan (dengan paginasi)",
         parameters: [
           { name: "storeId", in: "query", required: false, schema: { type: "string" }, description: "Filter by toko" },
+          { name: "page", in: "query", required: false, schema: { type: "integer", default: 1, minimum: 1 }, description: "Halaman" },
+          { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, minimum: 1, maximum: 100 }, description: "Jumlah per halaman" },
         ],
-        responses: { 200: { description: "OK" } },
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: { type: "array", items: { type: "object" } },
+                    pagination: { $ref: "#/components/schemas/Pagination" },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
         tags: ["Sales Tracker"],

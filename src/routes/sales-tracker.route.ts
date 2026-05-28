@@ -20,8 +20,8 @@ const updateSchema = z.object({
 
 export const salesTrackerRoute = new Hono<{ Bindings: Env }>()
 
-salesTrackerRoute.get("/", SalesTrackerController.list)
-salesTrackerRoute.get("/:id", SalesTrackerController.get)
+salesTrackerRoute.get("/", SalesTrackerController.index)
+salesTrackerRoute.get("/:id", SalesTrackerController.show)
 salesTrackerRoute.post("/", zValidator("json", createSchema), SalesTrackerController.create)
 salesTrackerRoute.put("/:id", zValidator("json", updateSchema), SalesTrackerController.update)
-salesTrackerRoute.delete("/:id", SalesTrackerController.remove)
+salesTrackerRoute.delete("/:id", SalesTrackerController.destroy)

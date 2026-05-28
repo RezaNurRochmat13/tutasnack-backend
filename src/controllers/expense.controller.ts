@@ -27,7 +27,7 @@ type CreateBody = {
 
 type UpdateBody = Partial<CreateBody>
 
-export async function list(c: Context<{ Bindings: Env }>) {
+export async function index(c: Context<{ Bindings: Env }>) {
   const expenses = await (await createService(c)).list()
   return c.json({
     status: "success",
@@ -35,7 +35,7 @@ export async function list(c: Context<{ Bindings: Env }>) {
   })
 }
 
-export async function get(c: Context<{ Bindings: Env }>) {
+export async function show(c: Context<{ Bindings: Env }>) {
   const id = getId(c)
   if (!id) return c.json({ error: "ID is required" }, 400)
 
@@ -90,7 +90,7 @@ export async function update(c: Context<{ Bindings: Env }>) {
   }
 }
 
-export async function remove(c: Context<{ Bindings: Env }>) {
+export async function destroy(c: Context<{ Bindings: Env }>) {
   const id = getId(c)
   if (!id) return c.json({ error: "ID is required" }, 400)
 

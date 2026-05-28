@@ -14,3 +14,6 @@ export type { IExpenseService } from "./expense.service"
 
 export { SalesTrackerService } from "./sales-tracker.service"
 export type { ISalesTrackerService } from "./sales-tracker.service"
+
+export { DashboardService } from "./dashboard.service"
+export type { IDashboardService } from "./dashboard.service"

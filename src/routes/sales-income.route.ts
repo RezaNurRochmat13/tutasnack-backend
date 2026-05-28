@@ -18,8 +18,8 @@ const updateSchema = z.object({
 
 export const salesIncomeRoute = new Hono<{ Bindings: Env }>()
 
-salesIncomeRoute.get("/", SalesIncomeController.list)
-salesIncomeRoute.get("/:id", SalesIncomeController.get)
+salesIncomeRoute.get("/", SalesIncomeController.index)
+salesIncomeRoute.get("/:id", SalesIncomeController.show)
 salesIncomeRoute.post("/", zValidator("json", createSchema), SalesIncomeController.create)
 salesIncomeRoute.put("/:id", zValidator("json", updateSchema), SalesIncomeController.update)
-salesIncomeRoute.delete("/:id", SalesIncomeController.remove)
+salesIncomeRoute.delete("/:id", SalesIncomeController.destroy)

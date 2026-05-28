@@ -13,3 +13,6 @@ export type { IExpenseRepository, CreateExpenseInput } from "./expense.repositor
 
 export { SalesTrackerRepository } from "./sales-tracker.repository"
 export type { ISalesTrackerRepository, CreateSalesTrackerInput } from "./sales-tracker.repository"
+
+export { DashboardRepository } from "./dashboard.repository"
+export type { IDashboardRepository } from "./dashboard.repository"

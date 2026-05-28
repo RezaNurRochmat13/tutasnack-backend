@@ -18,8 +18,8 @@ const updateSchema = z.object({
 
 export const expenseRoute = new Hono<{ Bindings: Env }>()
 
-expenseRoute.get("/", ExpenseController.list)
-expenseRoute.get("/:id", ExpenseController.get)
+expenseRoute.get("/", ExpenseController.index)
+expenseRoute.get("/:id", ExpenseController.show)
 expenseRoute.post("/", zValidator("json", createSchema), ExpenseController.create)
 expenseRoute.put("/:id", zValidator("json", updateSchema), ExpenseController.update)
-expenseRoute.delete("/:id", ExpenseController.remove)
+expenseRoute.delete("/:id", ExpenseController.destroy)

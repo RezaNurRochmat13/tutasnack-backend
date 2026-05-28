@@ -24,6 +24,7 @@ export const spec = {
     { name: "Sales Income", description: "Pencatatan pendapatan" },
     { name: "Expenses", description: "Pencatatan pengeluaran" },
     { name: "Sales Tracker", description: "Tracker jumlah penjualan snack" },
+    { name: "Dashboard", description: "Ringkasan dashboard" },
   ],
   paths: {
     // ── Auth ────────────────────────────────────────────────────────────────
@@ -319,6 +320,97 @@ export const spec = {
         responses: {
           200: { description: "OK" },
           404: { description: "Data tidak ditemukan" },
+        },
+      },
+    },
+
+    // ── Dashboard ───────────────────────────────────────────────────────────
+    "/dashboard/total-expense": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Total seluruh pengeluaran",
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: {
+                      type: "object",
+                      properties: {
+                        total: { type: "number", example: 1500000 },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/dashboard/total-revenue": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Total pendapatan bersih (total income - total expense)",
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: {
+                      type: "object",
+                      properties: {
+                        total: { type: "number", example: 5000000 },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/dashboard/monthly-recap": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Rekap pendapatan per bulan",
+        parameters: [
+          { name: "year", in: "query", required: false, schema: { type: "integer" }, description: "Filter tahun" },
+        ],
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          year: { type: "integer", example: 2025 },
+                          month: { type: "string", example: "01" },
+                          total: { type: "number", example: 2500000 },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },

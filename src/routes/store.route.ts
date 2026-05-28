@@ -18,8 +18,8 @@ const updateSchema = z.object({
 
 export const storeRoute = new Hono<{ Bindings: Env }>()
 
-storeRoute.get("/", StoreController.list)
-storeRoute.get("/:id", StoreController.get)
+storeRoute.get("/", StoreController.index)
+storeRoute.get("/:id", StoreController.show)
 storeRoute.post("/", zValidator("json", createSchema), StoreController.create)
 storeRoute.put("/:id", zValidator("json", updateSchema), StoreController.update)
-storeRoute.delete("/:id", StoreController.remove)
+storeRoute.delete("/:id", StoreController.destroy)

@@ -18,10 +18,10 @@ export async function getTotalExpense(c: Context<{ Bindings: Env }>) {
 }
 
 export async function getTotalRevenue(c: Context<{ Bindings: Env }>) {
-  const total = await (await createService(c)).getTotalRevenue()
+  const data = await (await createService(c)).getTotalRevenue()
   return c.json({
     status: "success",
-    data: { total },
+    data,
   })
 }
 

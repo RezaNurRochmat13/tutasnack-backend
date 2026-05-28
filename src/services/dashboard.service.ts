@@ -2,7 +2,7 @@ import { IDashboardRepository } from "../repositories"
 
 export interface IDashboardService {
   getTotalExpense(): Promise<number>
-  getTotalRevenue(): Promise<number>
+  getTotalRevenue(): Promise<{ gross: number; net: number }>
   getMonthlyRecap(year?: number): Promise<{ month: string; year: number; total: number }[]>
 }
 
@@ -13,12 +13,12 @@ export class DashboardService implements IDashboardService {
     return this.dashboardRepository.getTotalExpense()
   }
 
-  async getTotalRevenue(): Promise<number> {
+  async getTotalRevenue(): Promise<{ gross: number; net: number }> {
     const [totalIncome, totalExpense] = await Promise.all([
       this.dashboardRepository.getTotalIncome(),
       this.dashboardRepository.getTotalExpense(),
     ])
-    return totalIncome - totalExpense
+    return { gross: totalIncome, net: totalIncome - totalExpense }
   }
 
   async getMonthlyRecap(year?: number): Promise<{ month: string; year: number; total: number }[]> {

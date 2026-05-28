@@ -355,7 +355,7 @@ export const spec = {
     "/dashboard/total-revenue": {
       get: {
         tags: ["Dashboard"],
-        summary: "Total pendapatan bersih (total income - total expense)",
+        summary: "Total pendapatan (gross = total income, net = total income - total expense)",
         responses: {
           200: {
             description: "OK",
@@ -368,7 +368,8 @@ export const spec = {
                     data: {
                       type: "object",
                       properties: {
-                        total: { type: "number", example: 5000000 },
+                        gross: { type: "number", example: 5000000 },
+                        net: { type: "number", example: 3500000 },
                       },
                     },
                   },

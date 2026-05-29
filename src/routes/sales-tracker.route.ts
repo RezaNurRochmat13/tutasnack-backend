@@ -18,9 +18,15 @@ const updateSchema = z.object({
   soldCount: z.number().int().min(0).optional(),
 })
 
+const querySchema = z.object({
+  storeId: z.string().uuid().optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
+})
+
 export const salesTrackerRoute = new Hono<{ Bindings: Env }>()
 
-salesTrackerRoute.get("/", SalesTrackerController.index)
+salesTrackerRoute.get("/", zValidator("query", querySchema), SalesTrackerController.index)
 salesTrackerRoute.get("/:id", SalesTrackerController.show)
 salesTrackerRoute.post("/", zValidator("json", createSchema), SalesTrackerController.create)
 salesTrackerRoute.put("/:id", zValidator("json", updateSchema), SalesTrackerController.update)

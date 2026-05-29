@@ -109,6 +109,21 @@ describe("SalesIncomeService", () => {
     })
   })
 
+  describe("update", () => {
+    it("should update existing record", async () => {
+      siRepo.findById.mockResolvedValue(mockRecord)
+      siRepo.update.mockResolvedValue({ ...mockRecord, amount: 99999 })
+      const result = await service.update("si-1", { amount: 99999 })
+      expect(result.amount).toBe(99999)
+      expect(siRepo.update).toHaveBeenCalledWith("si-1", { amount: 99999 })
+    })
+
+    it("should throw if record not found", async () => {
+      siRepo.findById.mockResolvedValue(null)
+      await expect(service.update("missing", { amount: 100 })).rejects.toThrow("Sales income not found")
+    })
+  })
+
   describe("remove", () => {
     it("should delete existing record", async () => {
       siRepo.findById.mockResolvedValue(mockRecord)

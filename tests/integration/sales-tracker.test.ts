@@ -101,6 +101,22 @@ describe("Sales Tracker API", () => {
       expect(res.status).toBe(200)
     })
 
+    it("should return 400 for invalid storeId format", async () => {
+      const res = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker?storeId=invalid-uuid`),
+        bindings,
+      )
+      expect(res.status).toBe(400)
+    })
+
+    it("should accept store_id query param (underscore)", async () => {
+      const res = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker?store_id=${storeId}`),
+        bindings,
+      )
+      expect(res.status).toBe(200)
+    })
+
     it("should return pagination metadata", async () => {
       const res = await app.fetch(new Request(`${BASE_URL}/api/sales-tracker`), bindings)
       expect(res.status).toBe(200)
@@ -155,6 +171,44 @@ describe("Sales Tracker API", () => {
     it("should return 404 for missing record", async () => {
       const res = await app.fetch(
         new Request(`${BASE_URL}/api/sales-tracker/00000000-0000-0000-0000-000000000000`),
+        bindings,
+      )
+      expect(res.status).toBe(404)
+    })
+  })
+
+  describe("PUT /sales-tracker/:id", () => {
+    it("should update a record", async () => {
+      const create = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ storeId, salesDate: "2024-06-15", saleCount: 50, soldCount: 30 }),
+        }),
+        bindings,
+      )
+      const { data: { id } } = await create.json() as any
+
+      const res = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ saleCount: 100 }),
+        }),
+        bindings,
+      )
+      expect(res.status).toBe(200)
+      const body: any = await res.json()
+      expect(body.data.saleCount).toBe(100)
+    })
+
+    it("should return 404 for non-existent record", async () => {
+      const res = await app.fetch(
+        new Request(`${BASE_URL}/api/sales-tracker/00000000-0000-0000-0000-000000000000`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ saleCount: 100 }),
+        }),
         bindings,
       )
       expect(res.status).toBe(404)

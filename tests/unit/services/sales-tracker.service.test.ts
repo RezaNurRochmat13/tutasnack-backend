@@ -111,6 +111,21 @@ describe("SalesTrackerService", () => {
     })
   })
 
+  describe("update", () => {
+    it("should update existing record", async () => {
+      stRepo.findById.mockResolvedValue(mockRecord)
+      stRepo.update.mockResolvedValue({ ...mockRecord, saleCount: 200 })
+      const result = await service.update("st-1", { saleCount: 200 })
+      expect(result.saleCount).toBe(200)
+      expect(stRepo.update).toHaveBeenCalledWith("st-1", { saleCount: 200 })
+    })
+
+    it("should throw if record not found", async () => {
+      stRepo.findById.mockResolvedValue(null)
+      await expect(service.update("missing", { saleCount: 100 })).rejects.toThrow("Sales tracker not found")
+    })
+  })
+
   describe("remove", () => {
     it("should delete existing record", async () => {
       stRepo.findById.mockResolvedValue(mockRecord)

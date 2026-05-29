@@ -16,9 +16,15 @@ const updateSchema = z.object({
   amount: z.number().positive().optional(),
 })
 
+const querySchema = z.object({
+  storeId: z.string().uuid().optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
+})
+
 export const salesIncomeRoute = new Hono<{ Bindings: Env }>()
 
-salesIncomeRoute.get("/", SalesIncomeController.index)
+salesIncomeRoute.get("/", zValidator("query", querySchema), SalesIncomeController.index)
 salesIncomeRoute.get("/:id", SalesIncomeController.show)
 salesIncomeRoute.post("/", zValidator("json", createSchema), SalesIncomeController.create)
 salesIncomeRoute.put("/:id", zValidator("json", updateSchema), SalesIncomeController.update)

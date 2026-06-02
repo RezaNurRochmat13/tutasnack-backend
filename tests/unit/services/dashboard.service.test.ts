@@ -6,6 +6,8 @@ function createMockRepo(): IDashboardRepository {
     getTotalExpense: vi.fn(),
     getTotalIncome: vi.fn(),
     getMonthlyIncome: vi.fn(),
+    getYearlyIncome: vi.fn(),
+    getSalesTrackerByStore: vi.fn(),
   }
 }
 
@@ -59,6 +61,47 @@ describe("DashboardService", () => {
       repo.getMonthlyIncome.mockResolvedValue([])
       await service.getMonthlyRecap(2025)
       expect(repo.getMonthlyIncome).toHaveBeenCalledWith(2025)
+    })
+  })
+
+  describe("getYearlyRecap", () => {
+    it("should return yearly income recap", async () => {
+      repo.getYearlyIncome.mockResolvedValue([
+        { year: 2024, total: 300000 },
+        { year: 2025, total: 500000 },
+      ])
+      const result = await service.getYearlyRecap()
+      expect(result).toHaveLength(2)
+      expect(result[0].year).toBe(2024)
+      expect(result[0].total).toBe(300000)
+      expect(result[1].year).toBe(2025)
+      expect(result[1].total).toBe(500000)
+    })
+
+    it("should pass year filter to repository", async () => {
+      repo.getYearlyIncome.mockResolvedValue([])
+      await service.getYearlyRecap(2025)
+      expect(repo.getYearlyIncome).toHaveBeenCalledWith(2025)
+    })
+  })
+
+  describe("getSalesTrackerByStore", () => {
+    it("should return sales tracker grouped by store", async () => {
+      repo.getSalesTrackerByStore.mockResolvedValue([
+        { storeId: "store-1", storeName: "Toko A", totalSaleCount: 100, totalSoldCount: 75 },
+        { storeId: "store-2", storeName: "Toko B", totalSaleCount: 50, totalSoldCount: 40 },
+      ])
+      const result = await service.getSalesTrackerByStore()
+      expect(result).toHaveLength(2)
+      expect(result[0].storeName).toBe("Toko A")
+      expect(result[0].totalSaleCount).toBe(100)
+      expect(result[0].totalSoldCount).toBe(75)
+    })
+
+    it("should pass storeId filter to repository", async () => {
+      repo.getSalesTrackerByStore.mockResolvedValue([])
+      await service.getSalesTrackerByStore("store-1")
+      expect(repo.getSalesTrackerByStore).toHaveBeenCalledWith("store-1")
     })
   })
 })

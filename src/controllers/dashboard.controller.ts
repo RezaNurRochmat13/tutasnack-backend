@@ -34,3 +34,22 @@ export async function getMonthlyRecap(c: Context<{ Bindings: Env }>) {
     data,
   })
 }
+
+export async function getYearlyRecap(c: Context<{ Bindings: Env }>) {
+  const yearParam = c.req.query("year")
+  const year = yearParam ? parseInt(yearParam) : undefined
+  const data = await (await createService(c)).getYearlyRecap(year)
+  return c.json({
+    status: "success",
+    data,
+  })
+}
+
+export async function getSalesTrackerByStore(c: Context<{ Bindings: Env }>) {
+  const storeId = c.req.query("storeId") || undefined
+  const data = await (await createService(c)).getSalesTrackerByStore(storeId)
+  return c.json({
+    status: "success",
+    data,
+  })
+}

@@ -464,6 +464,76 @@ export const spec = {
         },
       },
     },
+    "/dashboard/yearly-recap": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Rekap pendapatan per tahun",
+        parameters: [
+          { name: "year", in: "query", required: false, schema: { type: "integer" }, description: "Filter tahun" },
+        ],
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          year: { type: "integer", example: 2025 },
+                          total: { type: "number", example: 5000000 },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/dashboard/sales-tracker": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Rekap total sales tracker per toko",
+        parameters: [
+          { name: "storeId", in: "query", required: false, schema: { type: "string" }, description: "Filter by toko" },
+        ],
+        responses: {
+          200: {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    status: { type: "string", example: "success" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          storeId: { type: "string", example: "550e8400-e29b-41d4-a716-446655440000" },
+                          storeName: { type: "string", example: "Angkringan Pak Mukri" },
+                          totalSaleCount: { type: "integer", example: 150 },
+                          totalSoldCount: { type: "integer", example: 120 },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
     // ── Sales Tracker ───────────────────────────────────────────────────────
     "/sales-tracker": {
